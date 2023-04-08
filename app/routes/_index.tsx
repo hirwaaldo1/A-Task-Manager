@@ -10,8 +10,11 @@ export const meta: V2_MetaFunction = () => {
 export default function Index() {
   const [isRemember, setIsRemember] = useState(false);
   return (
-    <main className="bg-[#1e1e1e] min-h-screen text-white flex justify-between items-center">
-      <div className="max-w-7xl m-auto w-full">
+    <main
+      className="bg-[#1e1e1e] min-h-screen text-white flex justify-between items-center"
+      id="bg-img"
+    >
+      <div className="max-w-7xl p-10 m-auto w-full">
         <div className="grid sm:grid-cols-2 sm:gap-4 md:gap-72">
           <About />
           <div className="bg-[#f1f1f1] text-black rounded-lg py-12 px-14">
