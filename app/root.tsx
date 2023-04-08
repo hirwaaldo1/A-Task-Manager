@@ -1,4 +1,4 @@
-import type { LinksFunction } from "@remix-run/node";
+import { LinksFunction, json } from "@remix-run/node";
 import stylesheet from "./style/index.css";
 import {
   Links,
@@ -7,11 +7,21 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "@remix-run/react";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ];
+export async function loader() {
+  return json({
+    ENV: {
+      SUPABASE_URL: process.env.SUPABASE_URL,
+      SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+      SUPABASE_JWT_KEY: process.env.SUPABASE_JWT_KEY,
+    },
+  });
+}
 export default function App() {
   return (
     <html lang="en">

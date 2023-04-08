@@ -1,11 +1,27 @@
 import type { V2_MetaFunction } from "@remix-run/react";
-import { Link } from "react-router-dom";
+import { Link, Form, useActionData, useNavigation } from "@remix-run/react";
 import About from "~/components/section/About";
+import { signUpWithEmail } from "~/utils/api";
+import { useEffect, useState } from "react";
 
 export const meta: V2_MetaFunction = () => {
   return [{ title: "Todo - Signup" }];
 };
+export async function action({ request }: { request: Request }) {
+  const fromData = await request.formData();
+  const name: any = fromData.get("name");
+  const email: any = fromData.get("email");
+  const password: any = fromData.get("password");
+  const response = await signUpWithEmail(name, email, password);
+  return response;
+}
 export default function Signup() {
+  const error = useActionData();
+  const { state } = useNavigation();
+  const [isError, setIsError] = useState<string | undefined>();
+  useEffect(() => {
+    setIsError(error);
+  }, [error]);
   return (
     <main
       className="bg-[#1e1e1e] min-h-screen text-white flex justify-between items-center"
@@ -19,21 +35,37 @@ export default function Signup() {
             <h3 className="text-sm font-light">
               Join us and we will help you in your darily life.
             </h3>
-            <div className="flex flex-col gap-6 mt-12">
+            {error && <p className="text-sm text-red-500 pt-8">*{error}</p>}
+            <Form
+              method="POST"
+              className={`flex flex-col gap-6 ${error ? "mt-3" : "mt-10"}`}
+            >
               <input
                 type="text"
+                name="name"
+                onFocus={() => setIsError(undefined)}
                 placeholder="Name"
-                className="outline-none rounded-md bg-white px-4 py-3.5 w-full border-l-[3px] border-black border-opacity-0 focus:border-opacity-100 placeholder:text-sm"
+                className={`outline-none rounded-md bg-white px-4 py-3.5 w-full border-l-[3px] focus:border-black placeholder:text-sm ${
+                  isError ? "border-red-500" : "border-transparent"
+                }`}
               />
               <input
                 type="text"
+                name="email"
+                onFocus={() => setIsError(undefined)}
                 placeholder="Email"
-                className="outline-none rounded-md bg-white px-4 py-3.5 w-full border-l-[3px] border-black border-opacity-0 focus:border-opacity-100 placeholder:text-sm"
+                className={`outline-none rounded-md bg-white px-4 py-3.5 w-full border-l-[3px] focus:border-black placeholder:text-sm ${
+                  isError ? "border-red-500" : "border-transparent"
+                }`}
               />
               <input
+                name="password"
                 type="password"
+                onFocus={() => setIsError(undefined)}
                 placeholder="Password"
-                className="outline-none rounded-md bg-white px-4 py-3.5 w-full border-l-[3px] border-black border-opacity-0 focus:border-opacity-100 placeholder:text-sm"
+                className={`outline-none rounded-md bg-white px-4 py-3.5 w-full border-l-[3px] focus:border-black placeholder:text-sm ${
+                  isError ? "border-red-500" : "border-transparent"
+                }`}
               />
 
               <div className="flex gap-2 w-11/12 mx-auto mt-4">
@@ -42,7 +74,17 @@ export default function Signup() {
                     Login
                   </button>
                 </Link>
-                <button className="bg-[#1e1e1e] text-white px-4 rounded-md w-full text-sm py-2.5">
+                <button
+                  type="submit"
+                  disabled={state !== "idle"}
+                  className={` text-white px-4 rounded-md w-full text-sm py-2.5
+                   ${
+                     state === "idle"
+                       ? "bg-[#1e1e1e]"
+                       : "bg-gray-400 cursor-wait"
+                   }
+                  `}
+                >
                   Signup
                 </button>
               </div>
@@ -56,7 +98,7 @@ export default function Signup() {
                   );
                 })}
               </div>
-            </div>
+            </Form>
           </div>
         </div>
       </div>
