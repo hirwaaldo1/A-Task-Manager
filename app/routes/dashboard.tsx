@@ -31,7 +31,7 @@ const MenuLeft = [
 
 export default function Dashoard() {
   return (
-    <main>
+    <main className="max-w-screen-2xl m-auto">
       <div className="flex justify-between h-screen">
         <div className="bg-[#202020] text-white w-[380px]">
           <div className="flex items-center gap-3 p-4">
