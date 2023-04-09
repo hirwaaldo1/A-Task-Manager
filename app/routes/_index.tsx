@@ -2,6 +2,7 @@ import type { V2_MetaFunction } from "@remix-run/react";
 import { Link, Form, useActionData, useNavigation } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import About from "~/components/section/About";
+import SocialMediaAuth from "~/components/section/register/SocialMediaAuth";
 import { signInWithEmail } from "~/utils/api";
 
 export const meta: V2_MetaFunction = () => {
@@ -93,15 +94,7 @@ export default function Index() {
                 </button>
               </div>
               <p className="text-center text-sm mt-14">Or login with</p>
-              <div className="flex justify-between">
-                {["Facebook", "Google", "Apple", "LinkedIn"].map((item) => {
-                  return (
-                    <span key={item} className="cursor-pointer">
-                      {item}
-                    </span>
-                  );
-                })}
-              </div>
+              <SocialMediaAuth />
             </Form>
           </div>
         </div>

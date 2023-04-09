@@ -1,13 +1,19 @@
 import type { V2_MetaFunction } from "@remix-run/react";
 import { Link, Form, useActionData, useNavigation } from "@remix-run/react";
 import About from "~/components/section/About";
-import { signUpWithEmail } from "~/utils/api";
+import { signInWithPlatform, signUpWithEmail } from "~/utils/api";
 import { useEffect, useState } from "react";
+import SocialMediaAuth from "~/components/section/register/SocialMediaAuth";
 
 export const meta: V2_MetaFunction = () => {
   return [{ title: "Todo - Signup" }];
 };
 export async function action({ request }: { request: Request }) {
+  const pathname: any = new URL(request.url).searchParams.get("login");
+  if (pathname) {
+    const response = await signInWithPlatform(pathname);
+    return response;
+  }
   const fromData = await request.formData();
   const name: any = fromData.get("name");
   const email: any = fromData.get("email");
@@ -18,6 +24,7 @@ export async function action({ request }: { request: Request }) {
 export default function Signup() {
   const error = useActionData();
   const { state } = useNavigation();
+
   const [isError, setIsError] = useState<string | undefined>();
   useEffect(() => {
     setIsError(error);
@@ -88,16 +95,9 @@ export default function Signup() {
                   Signup
                 </button>
               </div>
+
               <p className="text-center text-sm mt-14">Or signup with</p>
-              <div className="flex justify-between">
-                {["Facebook", "Google", "Apple", "LinkedIn"].map((item) => {
-                  return (
-                    <span key={item} className="cursor-pointer">
-                      {item}
-                    </span>
-                  );
-                })}
-              </div>
+              <SocialMediaAuth />
             </Form>
           </div>
         </div>

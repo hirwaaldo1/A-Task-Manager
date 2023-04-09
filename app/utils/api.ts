@@ -36,11 +36,14 @@ export async function signOut() {
   return redirect("/");
 }
 
-export async function signInWithOAuth(
+export async function signInWithPlatform(
   provider: "github" | "google" | "discord"
 ) {
-  const respanse = await supabase.auth.signInWithOAuth({
+  const { error, data } = await supabase.auth.signInWithOAuth({
     provider: provider,
   });
-  console.log(respanse, "respanse");
+  if (error) {
+    throw error.message;
+  }
+  return redirect(data.url);
 }
