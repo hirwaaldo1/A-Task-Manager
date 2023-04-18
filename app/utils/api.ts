@@ -1,5 +1,8 @@
 import { redirect } from "@remix-run/node";
-import supabase from "~/config/db";
+import { createClient } from "@supabase/supabase-js";
+const supabaseUrl = process.env.SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function signUpWithEmail(
   name: string,
@@ -18,12 +21,21 @@ export async function signUpWithEmail(
 }
 
 export async function signInWithEmail(email: string, password: string) {
-  const respanse = await supabase.auth.signInWithPassword({
+  const {
+    error,
+    data: { session },
+  } = await supabase.auth.signInWithPassword({
     email: email,
     password: password,
   });
-  if (respanse.error) {
-    return respanse.error.message;
+  if (error) {
+    return error.message;
+  }
+  if (session) {
+    await supabase.auth.setSession({
+      refresh_token: session.refresh_token,
+      access_token: session.access_token,
+    });
   }
   return redirect("/dashboard");
 }
@@ -46,4 +58,17 @@ export async function signInWithPlatform(
     throw error.message;
   }
   return redirect(data.url);
+}
+
+export async function checkAuth() {
+  // const user = await supabase.auth.getSession();
+  // console.log(user, "|||||||||||||||||||||||||||||||||||||)))))))))");
+  // let isAuthentificated;
+  // await supabase.auth.onAuthStateChange((event, session) => {
+  //   if (event === "SIGNED_IN") {
+  //     return (isAuthentificated = true);
+  //   }
+  //   return (isAuthentificated = false);
+  // });
+  // return isAuthentificated;
 }

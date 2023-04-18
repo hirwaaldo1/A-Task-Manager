@@ -1,4 +1,5 @@
-import { LinksFunction, json } from "@remix-run/node";
+import type { LinksFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import stylesheet from "./style/index.css";
 import {
   Links,
@@ -9,6 +10,8 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react";
+import { createBrowserClient } from "@supabase/auth-helpers-remix";
+import { ErrorBoundary } from "./ErrorBoundary";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -23,6 +26,15 @@ export async function loader() {
   });
 }
 export default function App() {
+  const env = useLoaderData();
+  const supabase = createBrowserClient(
+    env.ENV.SUPABASE_URL,
+    env.ENV.SUPABASE_ANON_KEY
+  );
+  const values = {
+    supabase,
+    env,
+  };
   return (
     <html lang="en">
       <head>
@@ -46,7 +58,8 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        <ErrorBoundary />
+        <Outlet context={values} />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
