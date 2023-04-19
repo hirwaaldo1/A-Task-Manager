@@ -1,19 +1,19 @@
 import type { V2_MetaFunction } from "@remix-run/react";
 import { Link, useOutletContext, useNavigate } from "@remix-run/react";
-import { createBrowserClient } from "@supabase/auth-helpers-remix";
 import { useState } from "react";
 import About from "~/components/section/About";
 import SocialMediaAuth from "~/components/section/register/SocialMediaAuth";
-import { signInWithEmail } from "~/utils/api";
+import { checkAuth, signInWithEmail } from "~/utils/api";
 
 export const meta: V2_MetaFunction = () => {
   return [{ title: "Todo - Login" }];
 };
 
-// export async function loader() {
-//   const response = await checkAuth();
-//   return null;
-// }
+export async function loader({ context }: any) {
+  // const response = await checkAuth();
+  console.log(context, "1111111111111111111");
+  return null;
+}
 export async function action({ request }: { request: Request }) {
   const fromData = await request.formData();
   const email: any = fromData.get("email");

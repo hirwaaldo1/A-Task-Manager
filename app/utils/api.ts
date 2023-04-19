@@ -61,14 +61,6 @@ export async function signInWithPlatform(
 }
 
 export async function checkAuth() {
-  // const user = await supabase.auth.getSession();
-  // console.log(user, "|||||||||||||||||||||||||||||||||||||)))))))))");
-  // let isAuthentificated;
-  // await supabase.auth.onAuthStateChange((event, session) => {
-  //   if (event === "SIGNED_IN") {
-  //     return (isAuthentificated = true);
-  //   }
-  //   return (isAuthentificated = false);
-  // });
-  // return isAuthentificated;
+  const user = await supabase.auth.getUser();
+  console.log(user, "user ------------");
 }
