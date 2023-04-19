@@ -126,8 +126,8 @@ export default function Index() {
                 </button>
               </div>
               <p className="text-center text-sm mt-14">Or login with</p>
-              <SocialMediaAuth />
             </form>
+            <SocialMediaAuth />
           </div>
         </div>
       </div>
