@@ -11,7 +11,6 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import { createBrowserClient } from "@supabase/auth-helpers-remix";
-import { ErrorBoundary } from "./ErrorBoundary";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -58,7 +57,6 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <ErrorBoundary />
         <Outlet context={values} />
         <ScrollRestoration />
         <Scripts />
