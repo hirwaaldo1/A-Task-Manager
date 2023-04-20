@@ -46,9 +46,7 @@ export default function Index() {
     }
     navigate("/dashboard");
   }
-  if (message.get("access_token")) {
-    return navigate("/dashboard");
-  }
+  console.log(location);
   return (
     <main
       className="bg-[#1e1e1e] min-h-screen text-white flex justify-between items-center"
