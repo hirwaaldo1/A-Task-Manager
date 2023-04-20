@@ -5,6 +5,7 @@ import { FiX } from "react-icons/fi";
 export default function SocialMediaAuth() {
   const { supabase }: any = useOutletContext();
   const location = useLocation();
+
   const [hasError, setHasError] = useState<any>(
     new URLSearchParams(location.search).get("error_description")
   );

@@ -66,7 +66,7 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet context={values} />
+        {user === undefined ? <p>Loading</p> : <Outlet context={values} />}
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

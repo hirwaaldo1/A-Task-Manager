@@ -2,7 +2,8 @@ import type { V2_MetaFunction } from "@remix-run/node";
 import { FiSearch, FiCheckCircle, FiHome } from "react-icons/fi";
 import { IoInfiniteSharp } from "react-icons/io5";
 import { AiOutlineStar } from "react-icons/ai";
-import { Outlet } from "@remix-run/react";
+import { Outlet, useOutletContext, useNavigate } from "@remix-run/react";
+import { useState, useEffect } from "react";
 export const meta: V2_MetaFunction = () => {
   return [{ title: "Todo - Home" }];
 };
@@ -30,18 +31,35 @@ const MenuLeft = [
 ];
 
 export default function Dashoard() {
+  const [user, setUser] = useState<any>();
+  const { supabase }: any = useOutletContext();
+  useEffect(() => {
+    async function checkAuth() {
+      const { data } = await supabase.auth.getUser();
+      setUser(data.user);
+    }
+    checkAuth();
+  }, []);
+  const navigate = useNavigate();
+  if (user === undefined) return <p>Loading</p>;
+  if (user === null) return navigate("/");
+
   return (
     <main className="max-w-screen-2xl m-auto">
       <div className="flex justify-between h-screen">
         <div className="bg-[#202020] text-white w-[380px]" id="bg-img">
           <div className="flex items-center gap-3 p-4">
-            <div className="w-12 h-12 rounded-full bg-slate-100"></div>
+            <div className="w-12 h-12 rounded-full bg-slate-100 overflow-hidden">
+              {user.user_metadata.avatar_url && (
+                <img src={user.user_metadata.avatar_url} alt="user" />
+              )}
+            </div>
             <div className="mt-2">
               <h1 className="text-lg font-medium m-0 p-0 leading-3">
-                Hirwa Aldo
+                {user.user_metadata.full_name || user.email.split("@")[0]}
               </h1>
               <span className="text-[13px] text-[#999999] m-0 p-0 leading-[4px]">
-                hirwaaldo1@gmail.com
+                {user.email}
               </span>
             </div>
           </div>
