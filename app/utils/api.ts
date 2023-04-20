@@ -17,7 +17,7 @@ export async function signUpWithEmail(
   if (respanse.error) {
     return respanse.error.message;
   }
-  return redirect("/");
+  return redirect("/?success=1");
 }
 
 export async function signInWithEmail(email: string, password: string) {

@@ -11,7 +11,7 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import { createBrowserClient } from "@supabase/auth-helpers-remix";
-
+import { useEffect, useState } from "react";
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ];
@@ -25,13 +25,22 @@ export async function loader() {
   });
 }
 export default function App() {
+  const [user, setUser] = useState<Object | null>();
   const env = useLoaderData();
   const supabase = createBrowserClient(
     env.ENV.SUPABASE_URL,
     env.ENV.SUPABASE_ANON_KEY
   );
+  useEffect(() => {
+    async function checkAuth() {
+      const { data } = await supabase.auth.getUser();
+      setUser(data.user);
+    }
+    checkAuth();
+  }, []);
   const values = {
     supabase,
+    user,
     env,
   };
   return (

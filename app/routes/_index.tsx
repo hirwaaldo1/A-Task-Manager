@@ -1,26 +1,17 @@
 import type { V2_MetaFunction } from "@remix-run/react";
-import { Link, useOutletContext, useNavigate } from "@remix-run/react";
+import {
+  Link,
+  useOutletContext,
+  useNavigate,
+  useLocation,
+} from "@remix-run/react";
 import { useState } from "react";
 import About from "~/components/section/About";
 import SocialMediaAuth from "~/components/section/register/SocialMediaAuth";
-import { checkAuth, signInWithEmail } from "~/utils/api";
 
 export const meta: V2_MetaFunction = () => {
   return [{ title: "Todo - Login" }];
 };
-
-export async function loader({ context }: any) {
-  // const response = await checkAuth();
-  console.log(context, "1111111111111111111");
-  return null;
-}
-export async function action({ request }: { request: Request }) {
-  const fromData = await request.formData();
-  const email: any = fromData.get("email");
-  const password: any = fromData.get("password");
-  const response = await signInWithEmail(email, password);
-  return response;
-}
 
 export default function Index() {
   const { supabase }: any = useOutletContext();
@@ -28,10 +19,11 @@ export default function Index() {
   const [isError, setIsError] = useState<string | undefined>();
   const [isRemember, setIsRemember] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const location = useLocation();
+  const message = new URLSearchParams(location.search);
   const navigate = useNavigate();
   async function handleLogin(e: any) {
     e.preventDefault();
-
     setIsLoading(true);
     const {
       error,
@@ -62,7 +54,15 @@ export default function Index() {
       <div className="max-w-7xl p-10 m-auto w-full">
         <div className="grid sm:grid-cols-2 sm:gap-4 md:gap-72">
           <About />
-          <div className="bg-[#f1f1f1] text-black rounded-lg py-12 px-14">
+          <div className="bg-[#f1f1f1] text-black rounded-lg py-12 px-14 relative overflow-hidden">
+            <div
+              className={`absolute text-sm  w-full left-0 flex justify-center items-center
+              ${message.get("success") ? "top-0" : "-top-10"}`}
+            >
+              <span className="text-white bg-green-600 py-1 px-4 rounded-b">
+                Now you can login to verify the account
+              </span>
+            </div>
             <h3 className="font-semibold text-2xl mb-1">Login</h3>
             <h3 className="text-sm font-light">
               Welcome back, Please login to your account.

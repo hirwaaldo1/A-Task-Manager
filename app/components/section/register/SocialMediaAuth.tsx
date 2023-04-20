@@ -1,29 +1,22 @@
 import { useLocation, useOutletContext } from "@remix-run/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FiX } from "react-icons/fi";
+
 export default function SocialMediaAuth() {
   const { supabase }: any = useOutletContext();
   const location = useLocation();
   const [hasError, setHasError] = useState<any>(
     new URLSearchParams(location.search).get("error_description")
   );
-  useEffect(() => {
-    async function checkAuth() {
-      const { data } = await supabase.auth.getUser();
-      console.log("data", data);
-    }
-    checkAuth();
-  }, [supabase.auth.api]);
   async function signInWithPlatform(
     provider: "github" | "google" | "discord" | "linkedin"
   ) {
-    const { error, data } = await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: provider,
     });
     if (error) {
       throw error.message;
     }
-    console.log("ddaaaa", data);
   }
   return (
     <>
