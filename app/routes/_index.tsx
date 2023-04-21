@@ -2,14 +2,13 @@ import { redirect } from "@remix-run/node";
 import type { V2_MetaFunction } from "@remix-run/react";
 import {
   Link,
-  useOutletContext,
-  useNavigate,
   useLocation,
   useNavigation,
+  useActionData,
   Form,
 } from "@remix-run/react";
 import { createServerClient } from "@supabase/auth-helpers-remix";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import About from "~/components/section/About";
 import SocialMediaAuth from "~/components/section/register/SocialMediaAuth";
 export async function action({ request }: { request: Request }) {
@@ -30,25 +29,25 @@ export async function action({ request }: { request: Request }) {
     email: email,
     password: password,
   });
-  if (error) {
-    console.error(error, "Errror-------------------------------");
-  } else {
+  if (session) {
     return redirect("/dashboard");
   }
-  return null;
+  return error?.message;
 }
 export const meta: V2_MetaFunction = () => {
   return [{ title: "Todo - Login" }];
 };
 
 export default function Index() {
-  const { supabase }: any = useOutletContext();
+  const error = useActionData();
   const [isError, setIsError] = useState<string | undefined>();
   const [isRemember, setIsRemember] = useState(false);
   const { state } = useNavigation();
   const location = useLocation();
   const message = new URLSearchParams(location.search);
-
+  useEffect(() => {
+    setIsError(error);
+  }, [error]);
   return (
     <main
       className="bg-[#1e1e1e] min-h-screen text-white flex justify-between items-center"
@@ -76,9 +75,9 @@ export default function Index() {
             <h3 className="text-sm font-light">
               Welcome back, Please login to your account.
             </h3>
-            {isError && <p className="text-sm text-red-500 pt-8">*{isError}</p>}
+            {error && <p className="text-sm text-red-500 pt-8">*{error}</p>}
             <Form
-              className={`flex flex-col gap-6 ${isError ? "mt-3" : "mt-16"}`}
+              className={`flex flex-col gap-6 ${error ? "mt-3" : "mt-16"}`}
               method="POST"
             >
               <input
