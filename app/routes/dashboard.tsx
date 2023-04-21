@@ -9,6 +9,7 @@ export const meta: V2_MetaFunction = () => {
   return [{ title: "Todo - Home" }];
 };
 export async function loader({ request }: { request: Request }) {
+  console.log("request -----------", request.url);
   const response = new Response();
   const supabase = createServerClient(
     process.env.SUPABASE_URL!,
@@ -22,7 +23,7 @@ export async function loader({ request }: { request: Request }) {
     data: { session },
   } = await supabase.auth.getSession();
   if (!session) {
-    return redirect("/?errorMsg=1");
+    // return redirect("/?errorMsg=1");
   }
   return session;
 }

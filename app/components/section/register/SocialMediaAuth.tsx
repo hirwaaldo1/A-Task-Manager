@@ -3,7 +3,7 @@ import { useState } from "react";
 import { FiX } from "react-icons/fi";
 
 export default function SocialMediaAuth() {
-  const { supabase }: any = useOutletContext();
+  const { supabase, ENV }: any = useOutletContext();
   const location = useLocation();
 
   const [hasError, setHasError] = useState<any>(
@@ -14,6 +14,9 @@ export default function SocialMediaAuth() {
   ) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: provider,
+      options: {
+        redirectTo: `${ENV.APP_URL}/success`,
+      },
     });
     if (error) {
       throw error.message;
@@ -27,9 +30,9 @@ export default function SocialMediaAuth() {
           return (
             <button
               key={item}
-              onClick={async (e) => {
+              onClick={(e) => {
                 e.preventDefault();
-                await signInWithPlatform(item.toLowerCase());
+                signInWithPlatform(item.toLowerCase());
               }}
               className="cursor-pointer"
             >
