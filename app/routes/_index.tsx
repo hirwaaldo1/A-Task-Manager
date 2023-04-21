@@ -1,53 +1,45 @@
-import { redirect } from "@remix-run/node";
 import type { V2_MetaFunction } from "@remix-run/react";
 import {
   Link,
+  useOutletContext,
+  useNavigate,
   useLocation,
-  useNavigation,
-  useActionData,
-  Form,
 } from "@remix-run/react";
-import { createServerClient } from "@supabase/auth-helpers-remix";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import About from "~/components/section/About";
 import SocialMediaAuth from "~/components/section/register/SocialMediaAuth";
-export async function action({ request }: { request: Request }) {
-  const response = new Response();
-  const supabaseClient = createServerClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_ANON_KEY!,
-    { request, response }
-  );
-
-  const fromData = await request.formData();
-  const email: any = fromData.get("email");
-  const password: any = fromData.get("password");
-  const {
-    error,
-    data: { session },
-  } = await supabaseClient.auth.signInWithPassword({
-    email: email,
-    password: password,
-  });
-  if (session) {
-    return redirect("/dashboard");
-  }
-  return error?.message;
-}
 export const meta: V2_MetaFunction = () => {
   return [{ title: "Todo - Login" }];
 };
-
 export default function Index() {
-  const error = useActionData();
+  const { supabase }: any = useOutletContext();
+  const [{ email, password }, setForm] = useState({ email: "", password: "" });
   const [isError, setIsError] = useState<string | undefined>();
   const [isRemember, setIsRemember] = useState(false);
-  const { state } = useNavigation();
+  const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
   const message = new URLSearchParams(location.search);
-  useEffect(() => {
-    setIsError(error);
-  }, [error]);
+  const navigate = useNavigate();
+  async function handleLogin(e: any) {
+    e.preventDefault();
+    setIsLoading(true);
+    const {
+      error,
+      data: { session },
+    } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+    if (error) {
+      setIsError(error.message);
+      setIsLoading(false);
+    }
+    if (session) {
+      setIsLoading(false);
+      navigate("/dashboard");
+    }
+  }
+
   return (
     <main
       className="bg-[#1e1e1e] min-h-screen text-white flex justify-between items-center"
@@ -75,15 +67,16 @@ export default function Index() {
             <h3 className="text-sm font-light">
               Welcome back, Please login to your account.
             </h3>
-            {error && <p className="text-sm text-red-500 pt-8">*{error}</p>}
-            <Form
-              className={`flex flex-col gap-6 ${error ? "mt-3" : "mt-16"}`}
+            {isError && <p className="text-sm text-red-500 pt-8">*{isError}</p>}
+            <form
+              className={`flex flex-col gap-6 ${isError ? "mt-3" : "mt-16"}`}
               method="POST"
             >
               <input
                 name="email"
                 type="text"
                 placeholder="Email"
+                onChange={(e) => setForm({ email: e.target.value, password })}
                 onFocus={() => setIsError(undefined)}
                 className={`outline-none rounded-md bg-white px-4 py-3.5 w-full border-l-[3px] focus:border-black placeholder:text-sm ${
                   isError ? "border-red-500" : "border-transparent"
@@ -93,6 +86,7 @@ export default function Index() {
                 name="password"
                 type="password"
                 placeholder="Password"
+                onChange={(e) => setForm({ email, password: e.target.value })}
                 onFocus={() => setIsError(undefined)}
                 className={`outline-none rounded-md bg-white px-4 py-3.5 w-full border-l-[3px] focus:border-black placeholder:text-sm ${
                   isError ? "border-red-500" : "border-transparent"
@@ -118,20 +112,21 @@ export default function Index() {
                 </Link>
                 <button
                   type="submit"
-                  disabled={state !== "idle"}
-                  className={`text-white px-4 rounded-md w-full text-sm py-2.5
-                   ${
-                     state === "idle"
-                       ? "bg-[#1e1e1e]"
-                       : "bg-gray-400 cursor-wait"
-                   }
+                  onClick={handleLogin}
+                  disabled={isLoading}
+                  className={`border text-white px-4 rounded-md w-full text-sm py-2.5 
+                  ${
+                    !isLoading
+                      ? "bg-[#1e1e1e] border-[#1e1e1e]"
+                      : "bg-gray-400 cursor-wait"
+                  }
                   `}
                 >
-                  {state === "idle" ? "Login" : "Wait..."}
+                  {!isLoading ? "Login" : "Wait..."}
                 </button>
               </div>
               <p className="text-center text-sm mt-14">Or login with</p>
-            </Form>
+            </form>
             <SocialMediaAuth />
           </div>
         </div>
