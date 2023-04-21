@@ -1,12 +1,31 @@
 import type { V2_MetaFunction } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { FiSearch, FiCheckCircle, FiHome } from "react-icons/fi";
 import { IoInfiniteSharp } from "react-icons/io5";
 import { AiOutlineStar } from "react-icons/ai";
-import { Outlet, useOutletContext, useNavigate } from "@remix-run/react";
-import { useState, useEffect } from "react";
+import { Outlet, useLoaderData } from "@remix-run/react";
+import { createServerClient } from "@supabase/auth-helpers-remix";
 export const meta: V2_MetaFunction = () => {
   return [{ title: "Todo - Home" }];
 };
+export async function loader({ request }: { request: Request }) {
+  const response = new Response();
+  const supabase = createServerClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!,
+    {
+      request,
+      response,
+    }
+  );
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) {
+    return redirect("/?errorMsg=1");
+  }
+  return session;
+}
 const MenuLeft = [
   {
     type: "All",
@@ -31,19 +50,7 @@ const MenuLeft = [
 ];
 
 export default function Dashoard() {
-  const [user, setUser] = useState<any>();
-  const { supabase }: any = useOutletContext();
-  useEffect(() => {
-    async function checkAuth() {
-      const { data } = await supabase.auth.getUser();
-      setUser(data.user);
-    }
-    checkAuth();
-  }, []);
-  const navigate = useNavigate();
-  if (user === undefined) return <p>Loading</p>;
-  if (user === null) return navigate("/");
-
+  const { user } = useLoaderData();
   return (
     <main className="max-w-screen-2xl m-auto">
       <div className="flex justify-between h-screen">

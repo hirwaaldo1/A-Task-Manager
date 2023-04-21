@@ -12,7 +12,7 @@ export default function SocialMediaAuth() {
   async function signInWithPlatform(
     provider: "github" | "google" | "discord" | "linkedin"
   ) {
-    const { error, data } = await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: provider,
     });
     if (error) {

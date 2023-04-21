@@ -9,39 +9,64 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useRevalidator,
 } from "@remix-run/react";
-import { createBrowserClient } from "@supabase/auth-helpers-remix";
+import {
+  createBrowserClient,
+  createServerClient,
+} from "@supabase/auth-helpers-remix";
 import { useEffect, useState } from "react";
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ];
-export async function loader() {
-  return json({
-    ENV: {
-      SUPABASE_URL: process.env.SUPABASE_URL,
-      SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
-      SUPABASE_JWT_KEY: process.env.SUPABASE_JWT_KEY,
+export async function loader({ request }: { request: Request }) {
+  const response = new Response();
+  const supabase = createServerClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!,
+    { request, response }
+  );
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  return json(
+    {
+      session,
+      ENV: {
+        SUPABASE_URL: process.env.SUPABASE_URL,
+        SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+        SUPABASE_JWT_KEY: process.env.SUPABASE_JWT_KEY,
+      },
     },
-  });
+    {
+      headers: response.headers,
+    }
+  );
 }
 export default function App() {
   const [user, setUser] = useState<Object | null>();
-  const env = useLoaderData();
-  const supabase = createBrowserClient(
-    env.ENV.SUPABASE_URL,
-    env.ENV.SUPABASE_ANON_KEY
-  );
+  const { ENV, session } = useLoaderData();
+  const { revalidate } = useRevalidator();
+  const supabase = createBrowserClient(ENV.SUPABASE_URL, ENV.SUPABASE_ANON_KEY);
+  const serverAccessToken = session?.access_token;
   useEffect(() => {
-    async function checkAuth() {
-      const { data } = await supabase.auth.getUser();
-      setUser(data.user);
-    }
-    checkAuth();
-  }, []);
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.access_token !== serverAccessToken) {
+        revalidate();
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase, revalidate, serverAccessToken]);
   const values = {
     supabase,
     user,
-    env,
+    ENV,
   };
   return (
     <html lang="en">
