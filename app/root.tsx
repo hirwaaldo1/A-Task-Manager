@@ -15,7 +15,7 @@ import {
   createBrowserClient,
   createServerClient,
 } from "@supabase/auth-helpers-remix";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ];
@@ -45,7 +45,6 @@ export async function loader({ request }: { request: Request }) {
   );
 }
 export default function App() {
-  const [user, setUser] = useState<Object | null>();
   const { ENV, session } = useLoaderData();
   const { revalidate } = useRevalidator();
   const supabase = createBrowserClient(ENV.SUPABASE_URL, ENV.SUPABASE_ANON_KEY);
@@ -65,7 +64,6 @@ export default function App() {
   }, [supabase, revalidate, serverAccessToken]);
   const values = {
     supabase,
-    user,
     ENV,
   };
   return (
