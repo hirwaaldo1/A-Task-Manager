@@ -1,25 +1,40 @@
 import type { V2_MetaFunction } from "@remix-run/react";
 import { Link, Form, useActionData, useNavigation } from "@remix-run/react";
 import About from "~/components/section/About";
-import { signInWithPlatform, signUpWithEmail } from "~/utils/api";
+import { redirect } from "@remix-run/node";
 import { useEffect, useState } from "react";
 import SocialMediaAuth from "~/components/section/register/SocialMediaAuth";
+import { createServerClient } from "@supabase/auth-helpers-remix";
 
 export const meta: V2_MetaFunction = () => {
   return [{ title: "Todo - Signup" }];
 };
 export async function action({ request }: { request: Request }) {
-  const pathname: any = new URL(request.url).searchParams.get("login");
-  if (pathname) {
-    const response = await signInWithPlatform(pathname);
-    return response;
-  }
+  // const pathname: any = new URL(request.url).searchParams.get("login");
+  // if (pathname) {
+  //   const response = await signInWithPlatform(pathname);
+  //   return response;
+  // }
+  const response = new Response();
+  const supabaseClient = createServerClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!,
+    { request, response }
+  );
   const fromData = await request.formData();
-  const name: any = fromData.get("name");
   const email: any = fromData.get("email");
   const password: any = fromData.get("password");
-  const response = await signUpWithEmail(name, email, password);
-  return response;
+  const {
+    error,
+    data: { session },
+  } = await supabaseClient.auth.signUp({
+    email: email,
+    password: password,
+  });
+  if (session) {
+    return redirect("/?success=1");
+  }
+  return error?.message;
 }
 export default function Signup() {
   const error = useActionData();
