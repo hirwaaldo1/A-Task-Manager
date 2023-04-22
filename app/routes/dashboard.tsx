@@ -5,6 +5,7 @@ import { IoInfiniteSharp } from "react-icons/io5";
 import { AiOutlineStar } from "react-icons/ai";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import { createServerClient } from "@supabase/auth-helpers-remix";
+import { useState } from "react";
 export const meta: V2_MetaFunction = () => {
   return [{ title: "Todo - Home" }];
 };
@@ -24,33 +25,49 @@ export async function loader({ request }: { request: Request }) {
   if (!session) {
     return redirect("/?errorMsg=1");
   }
-  return session;
+  let { data: tasks, error } = await supabase
+    .from("tasks")
+    .select("*")
+    .eq("userId", session.user.id);
+  if (error) {
+    throw error.message;
+  }
+
+  return { session, tasks };
 }
-const MenuLeft = [
-  {
-    type: "All",
-    icon: <IoInfiniteSharp size={17} color="#788cde" />,
-    count: 1,
-  },
-  {
-    type: "Completed",
-    icon: <FiCheckCircle size={17} color="#dc6865" />,
-    count: 1,
-  },
-  {
-    type: "Tasks",
-    icon: <FiHome size={17} color="#788cde" />,
-    count: 1,
-  },
-  {
-    type: "Important",
-    icon: <AiOutlineStar size={17} color="#f5b6c2" />,
-    count: null,
-  },
-];
 
 export default function Dashoard() {
-  const { user } = useLoaderData();
+  const {
+    session: { user },
+    tasks,
+  } = useLoaderData();
+  const [allTask, setAllTask] = useState(tasks);
+  const MenuLeft = [
+    {
+      type: "All",
+      icon: <IoInfiniteSharp size={17} color="#788cde" />,
+      count: allTask.length,
+    },
+    {
+      type: "Completed",
+      icon: <FiCheckCircle size={17} color="#dc6865" />,
+      count: allTask.filter((task: { inProgress: boolean }) => !task.inProgress)
+        .length,
+    },
+    {
+      type: "Tasks",
+      icon: <FiHome size={17} color="#788cde" />,
+      count: allTask.filter((task: { inProgress: boolean }) => task.inProgress)
+        .length,
+    },
+    {
+      type: "Important",
+      icon: <AiOutlineStar size={17} color="#f5b6c2" />,
+      count: allTask.filter(
+        (task: { isImportance: boolean }) => task.isImportance
+      ).length,
+    },
+  ];
   return (
     <main className="max-w-screen-2xl m-auto">
       <div className="flex justify-between h-screen">
@@ -93,7 +110,7 @@ export default function Dashoard() {
                       {value.icon}
                       <span className="text-sm font-normal">{value.type}</span>
                     </div>
-                    {value.count && (
+                    {value.count > 0 && (
                       <div className=" bg-[#3e3e3e] text-[10px] flex items-center justify-center rounded-full w-4 h-4 pr-[1px] pt-[1px]">
                         <span>{value.count}</span>
                       </div>
