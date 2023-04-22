@@ -13,9 +13,27 @@ import { useOutletContext } from "@remix-run/react";
 export default function TaskCard({ task }: { task: any }) {
   SwiperCore.use([Mousewheel, Virtual]);
   const { supabase, setAllTask }: any = useOutletContext();
-  const [isCompleted, setIsCompleted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [isLoadingComplete, setIsLoadingComplete] = useState(false);
+  async function handleIsCompleted(id: string) {
+    setIsLoadingComplete(true);
+    const { error } = await supabase
+      .from("tasks")
+      .update({ inProgress: !task.inProgress })
+      .eq("id", task.id);
+    if (error) {
+      throw error.message;
+    }
+    setAllTask((prev: any) => {
+      return prev.map((task: any) => {
+        if (id === task.id) {
+          return { ...task, inProgress: !task.inProgress };
+        }
+        return task;
+      });
+    });
+    setIsLoadingComplete(false);
+  }
   async function handleIsImportant(id: string) {
     setIsLoading(true);
     const { error } = await supabase
@@ -49,16 +67,19 @@ export default function TaskCard({ task }: { task: any }) {
       <SwiperSlide>
         <div className="flex justify-between bg-[#2d2d2d] p-2 rounded hover:bg-[#353535] cursor-pointer">
           <div className="flex gap-2 text-[#e2e2e2]">
-            <div
-              className="mt-1"
-              onClick={() => setIsCompleted((prev) => !prev)}
-            >
-              {isCompleted ? (
-                <FiCheckCircle size={20} />
-              ) : (
-                <FiCircle size={20} />
-              )}
-            </div>
+            {isLoadingComplete ? (
+              <div className="mt-1">
+                <FiLoader className="animate-spin" size={20} />
+              </div>
+            ) : (
+              <div className="mt-1" onClick={() => handleIsCompleted(task.id)}>
+                {!task.inProgress ? (
+                  <FiCheckCircle size={20} />
+                ) : (
+                  <FiCircle size={20} />
+                )}
+              </div>
+            )}
             <div className="flex flex-col text-sm">
               <span>{task.task_name}</span>
               <span className="text-xs">2 of 6</span>
