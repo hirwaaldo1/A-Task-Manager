@@ -3,7 +3,7 @@ import { redirect } from "@remix-run/node";
 import { FiSearch, FiCheckCircle, FiHome } from "react-icons/fi";
 import { IoInfiniteSharp } from "react-icons/io5";
 import { AiOutlineStar } from "react-icons/ai";
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData, useOutletContext } from "@remix-run/react";
 import { createServerClient } from "@supabase/auth-helpers-remix";
 import { useState } from "react";
 export const meta: V2_MetaFunction = () => {
@@ -32,15 +32,17 @@ export async function loader({ request }: { request: Request }) {
   if (error) {
     throw error.message;
   }
-
-  return { session, tasks };
+  const userID = session.user.id;
+  return { session, tasks, userID };
 }
 
 export default function Dashoard() {
   const {
     session: { user },
     tasks,
+    userID,
   } = useLoaderData();
+  const { supabase }: any = useOutletContext();
   const [allTask, setAllTask] = useState(tasks);
   const MenuLeft = [
     {
@@ -121,7 +123,7 @@ export default function Dashoard() {
             })}
           </div>
         </div>
-        <Outlet context={{ allTask, setAllTask }} />
+        <Outlet context={{ allTask, setAllTask, supabase, userID }} />
       </div>
     </main>
   );
