@@ -4,7 +4,7 @@ A-task is an incredibly useful project management tool that enables individuals 
 
 ## Live version
 
-[A-Task Project on netlify](https://a-van.netlify.app/)
+[A-Task Project on netlify](https://a-task-manager.vercel.app)
 
 ## Contents
 
