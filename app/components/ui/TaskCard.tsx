@@ -1,12 +1,41 @@
-import { FiCircle, FiCheckCircle, FiStar, FiTrash } from "react-icons/fi";
+import {
+  FiCircle,
+  FiCheckCircle,
+  FiStar,
+  FiTrash,
+  FiLoader,
+} from "react-icons/fi";
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Mousewheel, Virtual } from "swiper";
+import { useOutletContext } from "@remix-run/react";
 
 export default function TaskCard({ task }: { task: any }) {
   SwiperCore.use([Mousewheel, Virtual]);
+  const { supabase, setAllTask }: any = useOutletContext();
   const [isCompleted, setIsCompleted] = useState(false);
-  const [isImportant, setIsImportant] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleIsImportant(id: string) {
+    setIsLoading(true);
+    const { error } = await supabase
+      .from("tasks")
+      .update({ isImportance: !task.isImportance })
+      .eq("id", task.id);
+    if (error) {
+      throw error.message;
+    }
+    setAllTask((prev: any) => {
+      return prev.map((task: any) => {
+        if (id === task.id) {
+          return { ...task, isImportance: !task.isImportance };
+        }
+        return task;
+      });
+    });
+    setIsLoading(false);
+  }
+
   return (
     <Swiper
       className="w-full"
@@ -35,11 +64,18 @@ export default function TaskCard({ task }: { task: any }) {
               <span className="text-xs">2 of 6</span>
             </div>
           </div>
-          <div className="mt-1" onClick={() => setIsImportant((prev) => !prev)}>
-            <FiStar
-              className={`${isImportant && "fill-[#7589d9] text-[#7589d9]"}`}
-              size={18}
-            />
+          <div className="mt-1">
+            {isLoading ? (
+              <FiLoader className="animate-spin" size={18} />
+            ) : (
+              <FiStar
+                className={`${
+                  task.isImportance && "fill-[#7589d9] text-[#7589d9]"
+                }`}
+                size={18}
+                onClick={() => handleIsImportant(task.id)}
+              />
+            )}
           </div>
         </div>
       </SwiperSlide>
