@@ -121,7 +121,7 @@ export default function Dashoard() {
             })}
           </div>
         </div>
-        <Outlet />
+        <Outlet context={{ allTask, setAllTask }} />
       </div>
     </main>
   );
