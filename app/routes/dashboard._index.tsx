@@ -1,8 +1,9 @@
 import { useOutletContext } from "@remix-run/react";
-import { FiHome, FiCircle, FiSend, FiLoader } from "react-icons/fi";
+import { FiCircle, FiSend, FiLoader } from "react-icons/fi";
 import Empty from "~/components/error/Empty";
 import TaskCard from "~/components/ui/TaskCard";
 import { useState, useEffect } from "react";
+import { IoInfiniteSharp } from "react-icons/io5";
 
 export default function Homes() {
   const { allTask, supabase, userID, setAllTask }: any = useOutletContext();
@@ -39,8 +40,8 @@ export default function Homes() {
   return (
     <div className="bg-[#1c1c1c] text-white w-[80%] py-10 px-12 relative">
       <div className="flex items-center gap-2 mb-5">
-        <FiHome size={20} color="#788cde" />
-        <span className="text-[#788cde] text-2xl font-semibold">Tasks</span>
+        <IoInfiniteSharp size={20} color="#788cde" />
+        <span className="text-[#788cde] text-2xl font-semibold">All Tasks</span>
       </div>
       {allTask.length === 0 ? (
         <Empty />

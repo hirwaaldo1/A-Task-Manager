@@ -93,7 +93,9 @@ export default function TaskCard({ task }: { task: any }) {
               </div>
             )}
             <div className="flex flex-col text-sm">
-              <span>{task.task_name}</span>
+              <span className={task.inProgress === false ? "line-through" : ""}>
+                {task.task_name}
+              </span>
               <span className="text-xs">2 of 6</span>
             </div>
           </div>
