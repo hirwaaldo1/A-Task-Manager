@@ -2,6 +2,10 @@ import { useOutletContext } from "@remix-run/react";
 import { FiCheckCircle } from "react-icons/fi";
 import Empty from "~/components/error/Empty";
 import TaskCard from "~/components/ui/TaskCard";
+import type { V2_MetaFunction } from "@remix-run/node";
+export const meta: V2_MetaFunction = () => {
+  return [{ title: "Todo - Completed" }];
+};
 
 export default function Completed() {
   const { allTask }: any = useOutletContext();

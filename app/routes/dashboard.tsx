@@ -3,7 +3,12 @@ import { redirect } from "@remix-run/node";
 import { FiSearch, FiCheckCircle, FiHome } from "react-icons/fi";
 import { IoInfiniteSharp } from "react-icons/io5";
 import { AiOutlineStar } from "react-icons/ai";
-import { Outlet, useLoaderData, useOutletContext } from "@remix-run/react";
+import {
+  NavLink,
+  Outlet,
+  useLoaderData,
+  useOutletContext,
+} from "@remix-run/react";
 import { createServerClient } from "@supabase/auth-helpers-remix";
 import { useState } from "react";
 export const meta: V2_MetaFunction = () => {
@@ -49,18 +54,22 @@ export default function Dashoard() {
       type: "All",
       icon: <IoInfiniteSharp size={17} color="#788cde" />,
       count: allTask.length,
+      link: "/dashboard",
+      end: true,
     },
     {
       type: "Completed",
       icon: <FiCheckCircle size={17} color="#dc6865" />,
       count: allTask.filter((task: { inProgress: boolean }) => !task.inProgress)
         .length,
+      link: "/dashboard/completed",
     },
     {
       type: "Tasks",
       icon: <FiHome size={17} color="#788cde" />,
       count: allTask.filter((task: { inProgress: boolean }) => task.inProgress)
         .length,
+      link: "/dashboard/tasks",
     },
     {
       type: "Important",
@@ -68,6 +77,7 @@ export default function Dashoard() {
       count: allTask.filter(
         (task: { isImportance: boolean }) => task.isImportance
       ).length,
+      link: "/dashboard/important",
     },
   ];
   return (
@@ -100,25 +110,33 @@ export default function Dashoard() {
           <div className="flex flex-col gap-3 mt-3 p-1.5">
             {MenuLeft.map((value, index) => {
               return (
-                <div
-                  key={index}
-                  className="px-3 hover:bg-[#323232] p-2.5 rounded-sm cursor-pointer relative group"
+                <NavLink
+                  to={value.link}
+                  end={value.end}
+                  key={`Nav-link-${index}`}
+                  className={({ isActive }) =>
+                    isActive ? "bg-[#323232] rounded-sm" : ""
+                  }
                 >
-                  <div className="absolute top-0 h-full items-center  left-0 hidden group-hover:flex">
-                    <span className="w-[3px] h-3.5 bg-[#76b9ed] left-0 rounded-full block"></span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex gap-4 items-center">
-                      {value.icon}
-                      <span className="text-sm font-normal">{value.type}</span>
+                  <div className="px-3 hover:bg-[#323232] p-2.5 rounded-sm cursor-pointer relative group">
+                    <div className="absolute top-0 h-full items-center  left-0 hidden group-hover:flex">
+                      <span className="w-[3px] h-3.5 bg-[#76b9ed] left-0 rounded-full block"></span>
                     </div>
-                    {value.count > 0 && (
-                      <div className=" bg-[#3e3e3e] text-[10px] flex items-center justify-center rounded-full w-4 h-4 pr-[1px] pt-[1px]">
-                        <span>{value.count}</span>
+                    <div className="flex items-center justify-between">
+                      <div className="flex gap-4 items-center">
+                        {value.icon}
+                        <span className="text-sm font-normal">
+                          {value.type}
+                        </span>
                       </div>
-                    )}
+                      {value.count > 0 && (
+                        <div className=" bg-[#3e3e3e] text-[10px] flex items-center justify-center rounded-full w-4 h-4 pr-[1px] pt-[1px]">
+                          <span>{value.count}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
+                </NavLink>
               );
             })}
           </div>

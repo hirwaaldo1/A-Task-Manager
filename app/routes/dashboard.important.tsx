@@ -2,6 +2,10 @@ import { useOutletContext } from "@remix-run/react";
 import { FiStar } from "react-icons/fi";
 import Empty from "~/components/error/Empty";
 import TaskCard from "~/components/ui/TaskCard";
+import type { V2_MetaFunction } from "@remix-run/node";
+export const meta: V2_MetaFunction = () => {
+  return [{ title: "Todo - Important" }];
+};
 
 export default function Important() {
   const { allTask }: any = useOutletContext();
