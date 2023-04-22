@@ -1,34 +1,41 @@
-# Welcome to Remix!
+# A-Task with Remix
 
-- [Remix Docs](https://remix.run/docs)
+A-task is an incredibly useful project management tool that enables individuals to effortlessly manage their daily tasks, thereby enhancing productivity and efficiency. This open source platform allows anyone to easily report issues and make pull requests, thereby ensuring a robust and constantly evolving tool that is tailored to the needs of its users. With its sleek and user-friendly interface, A-task is the perfect solution for busy individuals looking to stay organized and on top of their responsibilities, both at work and in their personal lives. Moreover, the collaborative nature of this project ensures that it is continually improving and evolving to meet the changing needs and demands of its users.
 
-## Deployment
+## Live version
 
-After having run the `create-remix` command and selected "Vercel" as a deployment target, you only need to [import your Git repository](https://vercel.com/new) into Vercel, and it will be deployed.
+[A-Task Project on netlify](https://a-van.netlify.app/)
 
-If you'd like to avoid using a Git repository, you can also deploy the directory by running [Vercel CLI](https://vercel.com/cli):
+## Contents
 
-```sh
-npm i -g vercel
-vercel
+In this A-Task Project project we have the following pages done:
+
+- [x] Login
+- [x] Sign Up
+- [x] Dashboard - All Tasks
+- [x] Dashboard - All completed tasks
+- [x] Dashboard - All Important tasks
+
+## Technologies Used
+
+This project is mainly based on [Remix](https://remix.run/) plus others few libraries listed below:
+
+- [Supabase](https://supabase.com)
+- [react-icons](https://www.npmjs.com/package/react-icons)
+- [Tailwind CSS](https://tailwindcss.com/)
+
+## How To Run The Project
+
+First, install the project's dependencies:
+
 ```
-
-It is generally recommended to use a Git repository, because future commits will then automatically be deployed by Vercel, through its [Git Integration](https://vercel.com/docs/concepts/git).
-
-## Development
-
-To run your Remix app locally, make sure your project's local dependencies are installed:
-
-```sh
 npm install
 ```
 
-Afterwards, start the Remix development server like so:
+Then, run the development server:
 
-```sh
-npm run dev
+```
+npm dev
 ```
 
-Open up [http://localhost:3000](http://localhost:3000) and you should be ready to go!
-
-If you're used to using the `vercel dev` command provided by [Vercel CLI](https://vercel.com/cli) instead, you can also use that, but it's not needed.
+There you go 😊, You can preview the project on [http://localhost:3000](http://localhost:3000)
