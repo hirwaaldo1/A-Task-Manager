@@ -1,5 +1,5 @@
 import { useOutletContext } from "@remix-run/react";
-import { FiHome, FiCircle, FiSend } from "react-icons/fi";
+import { FiHome, FiCircle, FiSend, FiLoader } from "react-icons/fi";
 import Empty from "~/components/error/Empty";
 import TaskCard from "~/components/ui/TaskCard";
 import { useState, useEffect } from "react";
@@ -8,10 +8,13 @@ export default function Homes() {
   const { allTask, supabase, userID, setAllTask }: any = useOutletContext();
   const [task, setTask] = useState("");
   const [error, setError] = useState<string | undefined>();
+  const [loading, setLoading] = useState(false);
 
   async function submitTask() {
+    setLoading(true);
     if (task === "" || task.trim() === "") {
       setError("Task cannot be empty");
+      return;
     }
     const { data, error } = await supabase
       .from("tasks")
@@ -19,8 +22,10 @@ export default function Homes() {
       .select();
     if (error) {
       setError(error.message);
+      return;
     }
     setAllTask((prev: any) => [...prev, data[0]]);
+    setLoading(false);
     setTask("");
   }
   useEffect(() => {
@@ -42,11 +47,9 @@ export default function Homes() {
       ) : (
         <div className="overflow-auto">
           <div className="flex flex-col gap-1 w-full">
-            {Array(4)
-              .fill("")
-              .map((_, index) => {
-                return <TaskCard key={index} />;
-              })}
+            {allTask.map((task: any) => {
+              return <TaskCard key={task.id} task={task} />;
+            })}
           </div>
         </div>
       )}
@@ -74,7 +77,11 @@ export default function Homes() {
               className="bg-transparent border-none outline-none placeholder:text-[#c8c8c8] text-sm"
             />
           </form>
-          <FiSend size={20} onClick={submitTask} />
+          {loading ? (
+            <FiLoader className="animate-spin" size={20} />
+          ) : (
+            <FiSend size={20} onClick={submitTask} />
+          )}
         </div>
       </div>
     </div>

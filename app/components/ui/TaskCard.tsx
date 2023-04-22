@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Mousewheel, Virtual } from "swiper";
 
-export default function TaskCard() {
+export default function TaskCard({ task }: { task: any }) {
   SwiperCore.use([Mousewheel, Virtual]);
   const [isCompleted, setIsCompleted] = useState(false);
   const [isImportant, setIsImportant] = useState(false);
@@ -31,7 +31,7 @@ export default function TaskCard() {
               )}
             </div>
             <div className="flex flex-col text-sm">
-              <span>adding redux in the blog project</span>
+              <span>{task.task_name}</span>
               <span className="text-xs">2 of 6</span>
             </div>
           </div>
