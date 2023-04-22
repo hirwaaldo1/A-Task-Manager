@@ -1,5 +1,0 @@
-// module.exports = {
-//   importReactSwiper: async () => import("swiper/react"),
-//   importSwiper: async () => import("swiper"),
-//   // importSwiperCss: async () => import("swiper/swiper.min.css"),
-// };
