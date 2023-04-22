@@ -53,6 +53,15 @@ export default function TaskCard({ task }: { task: any }) {
     });
     setIsLoading(false);
   }
+  async function handleDeleteTask(id: string) {
+    const { error } = await supabase.from("tasks").delete().eq("id", task.id);
+    if (error) {
+      throw error.message;
+    }
+    setAllTask((prev: any) => {
+      return prev.filter((task: any) => task.id !== id);
+    });
+  }
 
   return (
     <Swiper
@@ -62,6 +71,9 @@ export default function TaskCard({ task }: { task: any }) {
         forceToAxis: true,
         sensitivity: -10,
         thresholdDelta: 14,
+      }}
+      onSlideChange={(sliler) => {
+        if (sliler.isEnd) handleDeleteTask(task.id);
       }}
     >
       <SwiperSlide>

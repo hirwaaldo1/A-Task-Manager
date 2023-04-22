@@ -13,7 +13,7 @@ export default function Homes() {
   async function submitTask() {
     setLoading(true);
     if (task === "" || task.trim() === "") {
-      setError("Task cannot be empty");
+      setError("Task can not be empty");
       return;
     }
     const { data, error } = await supabase
