@@ -7,10 +7,11 @@ export default function About() {
       <h3 className="text-4xl font-bold mt-4">A - Task Manager</h3>
       <h5 className="uppercase font-light mt-2">A-task manager ldt</h5>
       <p className="font-medium mt-10">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Quis ipsum
-        suspendisse ultrices gravida. Risus com- modo viverra maecenas accumsan
-        lacus vel facilisis.
+        A-task is a user-friendly project management tool that streamlines daily
+        tasks for greater productivity. It's an open-source platform that
+        accepts issues and pull requests for continuous development. With its
+        sleek interface, A-task is perfect for busy individuals at work or in
+        their personal lives.
       </p>
       <div className="absolute bottom-0">
         <span className="block">Contact</span>
