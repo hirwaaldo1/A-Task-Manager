@@ -12,10 +12,12 @@ import { useOutletContext } from "@remix-run/react";
 
 export default function TaskCard({ task }: { task: any }) {
   SwiperCore.use([Mousewheel, Virtual]);
-  const { supabase, setAllTask }: any = useOutletContext();
+  const { supabase, setAllTask, setNavBarTask, soundPlay }: any =
+    useOutletContext();
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingComplete, setIsLoadingComplete] = useState(false);
-  async function handleIsCompleted(id: string) {
+  async function handleIsCompleted(id: string, e: any) {
+    e.stopPropagation();
     setIsLoadingComplete(true);
     const { error } = await supabase
       .from("tasks")
@@ -24,6 +26,7 @@ export default function TaskCard({ task }: { task: any }) {
     if (error) {
       throw error.message;
     }
+    if (task.inProgress) soundPlay();
     setAllTask((prev: any) => {
       return prev.map((task: any) => {
         if (id === task.id) {
@@ -34,7 +37,8 @@ export default function TaskCard({ task }: { task: any }) {
     });
     setIsLoadingComplete(false);
   }
-  async function handleIsImportant(id: string) {
+  async function handleIsImportant(id: string, e: any) {
+    e.stopPropagation();
     setIsLoading(true);
     const { error } = await supabase
       .from("tasks")
@@ -77,14 +81,20 @@ export default function TaskCard({ task }: { task: any }) {
       }}
     >
       <SwiperSlide>
-        <div className="flex justify-between bg-[#2d2d2d] p-2 rounded hover:bg-[#353535] cursor-pointer transition-all delay-[30ms] active:p-4">
+        <div
+          className="flex justify-between bg-[#2d2d2d] p-2 rounded hover:bg-[#353535] cursor-pointer transition-all delay-[30ms] active:bg-[#353535]"
+          onClick={() => setNavBarTask(task)}
+        >
           <div className="flex gap-2 text-[#e2e2e2]">
             {isLoadingComplete ? (
               <div className="mt-1">
                 <FiLoader className="animate-spin" size={20} />
               </div>
             ) : (
-              <div className="mt-1" onClick={() => handleIsCompleted(task.id)}>
+              <div
+                className="mt-1"
+                onClick={(e) => handleIsCompleted(task.id, e)}
+              >
                 {!task.inProgress ? (
                   <FiCheckCircle size={20} />
                 ) : (
@@ -108,7 +118,7 @@ export default function TaskCard({ task }: { task: any }) {
                   task.isImportance && "fill-[#7589d9] text-[#7589d9]"
                 }`}
                 size={18}
-                onClick={() => handleIsImportant(task.id)}
+                onClick={(e) => handleIsImportant(task.id, e)}
               />
             )}
           </div>

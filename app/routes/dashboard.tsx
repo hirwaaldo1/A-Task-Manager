@@ -1,15 +1,6 @@
 import type { V2_MetaFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import {
-  FiSearch,
-  FiCheckCircle,
-  FiHome,
-  FiCircle,
-  FiStar,
-  FiPlus,
-  FiSave,
-  FiX,
-} from "react-icons/fi";
+import { FiSearch, FiCheckCircle, FiHome } from "react-icons/fi";
 import { IoInfiniteSharp } from "react-icons/io5";
 import { AiOutlineStar } from "react-icons/ai";
 import {
@@ -19,7 +10,8 @@ import {
   useOutletContext,
 } from "@remix-run/react";
 import { createServerClient } from "@supabase/auth-helpers-remix";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import SideNav from "~/components/ui/SideNav";
 export const meta: V2_MetaFunction = () => {
   return [{ title: "Todo - Home" }];
 };
@@ -58,6 +50,11 @@ export default function Dashoard() {
   } = useLoaderData();
   const { supabase }: any = useOutletContext();
   const [allTask, setAllTask] = useState(tasks);
+  const [navBarTask, setNavBarTask] = useState();
+  const AudioRef: React.RefObject<HTMLAudioElement> = useRef(null);
+  function soundPlay(): void {
+    if (AudioRef.current) AudioRef.current.play();
+  }
   const MenuLeft = [
     {
       type: "All",
@@ -150,55 +147,24 @@ export default function Dashoard() {
             })}
           </div>
         </div>
-        <Outlet context={{ allTask, setAllTask, supabase, userID }} />
-        <div
-          className="absolute right-0 top-0 bg-[#2d2d2d] z-50 w-[350px] px-4 py-6 text-white h-full shadow-lg"
-          id="bg-img"
-        >
-          <div className="flex w-full justify-end mb-4">
-            <FiX size={25} />
-          </div>
-          <div
-            className="bg-[#353535] py-4 px-2 rounded-sm border border-[#232323c0] mb-4 shadow-[0px_0px_16px_0px_rgba(0,0,0,0.20)]"
-            id="bg-img"
-          >
-            <div className="flex items-center gap-3 px-1.5">
-              <div>
-                <FiCircle size={20} />
-              </div>
-              <p className="flex-1 text-sm">react router DOM</p>
-              <FiStar />
-            </div>
-            <div className="flex items-center gap-3  mt-3 bg-[#434343] rounded-sm mb-2 py-3 px-2">
-              <div>
-                <FiCircle size={16} />
-              </div>
-              <p className="flex-1 text-[13px] text-[#9296a1]">
-                react router DOM
-              </p>
-            </div>
-            <div className="flex items-center gap-3  mt-3 bg-[#434343] rounded-sm mb-2 py-3 px-2">
-              <div>
-                <FiPlus size={16} />
-              </div>
-              <input
-                type="text"
-                placeholder="Next step"
-                className="outline-none border-none bg-transparent flex-1 text-[13px] text-[#dedede]"
-              />
-              <FiSave size={16} />
-            </div>
-          </div>
-          <textarea
-            className="outline-none bg-[#434343] rounded-sm w-full p-3 text-[13px] text-[#dedede] border-[#232323c0] h-[200px] border"
-            placeholder="Add note"
-          ></textarea>
-          <div className="flex w-full justify-end">
-            <button className="text-sm bg-[#434343] px-4 py-2 rounded-sm">
-              Save
-            </button>
-          </div>
-        </div>
+        <audio
+          src="/assets/audio/1.mp3"
+          className="absolute -z-50 -top-36"
+          ref={AudioRef}
+        />
+        <Outlet
+          context={{
+            allTask,
+            setAllTask,
+            supabase,
+            userID,
+            setNavBarTask,
+            soundPlay,
+          }}
+        />
+        {navBarTask && (
+          <SideNav navBarTask={navBarTask} setNavBarTask={setNavBarTask} />
+        )}
       </div>
     </main>
   );
