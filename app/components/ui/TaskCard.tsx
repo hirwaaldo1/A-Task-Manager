@@ -77,7 +77,7 @@ export default function TaskCard({ task }: { task: any }) {
       }}
     >
       <SwiperSlide>
-        <div className="flex justify-between bg-[#2d2d2d] p-2 rounded hover:bg-[#353535] cursor-pointer">
+        <div className="flex justify-between bg-[#2d2d2d] p-2 rounded hover:bg-[#353535] cursor-pointer transition-all delay-[30ms] active:p-4">
           <div className="flex gap-2 text-[#e2e2e2]">
             {isLoadingComplete ? (
               <div className="mt-1">
