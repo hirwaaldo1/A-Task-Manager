@@ -96,7 +96,7 @@ export default function TaskCard({ task }: { task: any }) {
               <span className={task.inProgress === false ? "line-through" : ""}>
                 {task.task_name}
               </span>
-              <span className="text-xs">2 of 6</span>
+              <span className="text-xs">No steps</span>
             </div>
           </div>
           <div className="mt-1">
