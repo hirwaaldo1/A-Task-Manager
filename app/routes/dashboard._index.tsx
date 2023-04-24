@@ -10,18 +10,19 @@ export default function Homes() {
   const [task, setTask] = useState("");
   const [error, setError] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
-
   async function submitTask() {
-    setLoading(true);
+    if (loading) return;
     if (task === "" || task.trim() === "") {
       setError("Task can not be empty");
       return;
     }
+    setLoading(true);
     const { data, error } = await supabase
       .from("tasks")
       .insert([{ userId: userID, task_name: task }])
       .select();
     if (error) {
+      setLoading(false);
       setError(error.message);
       return;
     }
@@ -75,7 +76,7 @@ export default function Homes() {
               type="text"
               value={task}
               onChange={(e) => setTask(e.target.value)}
-              className="bg-transparent border-none outline-none placeholder:text-[#c8c8c8] text-sm"
+              className="bg-transparent border-none outline-none placeholder:text-[#c8c8c8] text-sm w-full"
             />
           </form>
           {loading ? (
