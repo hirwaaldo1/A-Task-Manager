@@ -163,7 +163,12 @@ export default function Dashoard() {
           }}
         />
         {navBarTask && (
-          <SideNav navBarTask={navBarTask} setNavBarTask={setNavBarTask} />
+          <SideNav
+            navBarTask={navBarTask}
+            setNavBarTask={setNavBarTask}
+            supabase={supabase}
+            setAllTask={setAllTask}
+          />
         )}
       </div>
     </main>
