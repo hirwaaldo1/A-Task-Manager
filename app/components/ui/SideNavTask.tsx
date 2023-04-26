@@ -4,10 +4,10 @@ export default function SideNavTask({
   value,
   navBarTask,
   supabase,
-  //   allSteps,
   setAllTask,
 }: any) {
   const [checkLoading, setCheckLoading] = useState(false);
+  const [isProgress, setIsProgress] = useState(value.isProgress);
   async function handleIsProgress(id: string) {
     setCheckLoading(true);
     let allSteps = navBarTask.steps.map((step: any) => {
@@ -32,13 +32,14 @@ export default function SideNavTask({
         return task;
       });
     });
+    setIsProgress((prev: any) => !prev);
     setCheckLoading(false);
   }
   return (
     <div>
       {checkLoading ? (
         <FiLoader className="animate-spin" size={16} />
-      ) : value.isProgress ? (
+      ) : isProgress ? (
         <FiCircle size={16} onClick={() => handleIsProgress(value.id)} />
       ) : (
         <FiCheckCircle size={16} onClick={() => handleIsProgress(value.id)} />

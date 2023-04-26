@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FiLoader, FiPlus, FiSave, FiX } from "react-icons/fi";
+import { FiDelete, FiLoader, FiPlus, FiSave, FiX } from "react-icons/fi";
 import SideNavTask from "./SideNavTask";
 
 export default function SideNav({
@@ -13,7 +13,7 @@ export default function SideNav({
   const [error, setError] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const [loadingNote, setLoadingNote] = useState(false);
-
+  const [loadingDelete, setLoadingDelete] = useState(false);
   let allSteps = navBarTask.steps || [];
   async function submitStep() {
     if (loading) return;
@@ -68,7 +68,31 @@ export default function SideNav({
     });
     setLoadingNote(false);
   }
-
+  async function deleteStep(id: string) {
+    if (loadingDelete) return;
+    setLoadingDelete(true);
+    let allSteps = navBarTask.steps.filter((step: any) => step.id !== id);
+    const { error } = await supabase
+      .from("tasks")
+      .update({ steps: allSteps })
+      .eq("id", navBarTask.id)
+      .select();
+    if (error) {
+      throw error.message;
+    }
+    setAllTask((prev: any) => {
+      return prev.map((task: any) => {
+        if (navBarTask.id === task.id) {
+          return { ...task, steps: allSteps };
+        }
+        return task;
+      });
+    });
+    setNavBarTask((prev: any) => {
+      return { ...prev, steps: allSteps };
+    });
+    setLoadingDelete(false);
+  }
   return (
     <div className="absolute left-0 top-0 w-full h-full flex z-50">
       <div className="flex-1" onClick={() => setNavBarTask(undefined)}></div>
@@ -89,6 +113,7 @@ export default function SideNav({
         >
           <div className="flex items-center gap-3 px-1.5">
             <p className="flex-1 text-sm">{navBarTask.task_name}</p>
+            {loadingDelete && <FiLoader size={16} />}
           </div>
           {navBarTask.steps &&
             navBarTask.steps.map((value: any) => {
@@ -107,6 +132,11 @@ export default function SideNav({
                   <p className="flex-1 text-[13px] text-[#9296a1]">
                     {value.step}
                   </p>
+                  <FiDelete
+                    onClick={() => deleteStep(value.id)}
+                    size={16}
+                    className="cursor-pointer"
+                  />
                 </div>
               );
             })}
