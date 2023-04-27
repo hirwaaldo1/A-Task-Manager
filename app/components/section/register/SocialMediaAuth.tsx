@@ -10,7 +10,7 @@ export default function SocialMediaAuth() {
     new URLSearchParams(location.search).get("error_description")
   );
   async function signInWithPlatform(
-    provider: "github" | "google" | "discord" | "linkedin"
+    provider: "github" | "google" | "discord" | "linkedin" | "twitch"
   ) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: provider,
@@ -26,7 +26,7 @@ export default function SocialMediaAuth() {
   return (
     <>
       <div className="flex justify-between">
-        {["Discord", "Google", "Github", "Linkedin"].map((item: any) => {
+        {["Discord", "Google", "Github", "Twitch"].map((item: any) => {
           return (
             <button
               key={item}
