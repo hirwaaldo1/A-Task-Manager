@@ -3,12 +3,16 @@
 @tailwind utilities;
 body {
   font-family: "Schibsted Grotesk", "Roboto", sans-serif;
-  /* font-family: "Roboto", sans-serif; */
 }
 #bg-img {
   background-image: url("/assets/bg-left.PNG");
 }
 
 body {
-  overflow-x: hidden;
+  overflow: hidden !important;
+}
+
+.disable-select {
+  user-select: none;
+  -webkit-touch-callout: none;
 }

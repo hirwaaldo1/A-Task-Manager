@@ -89,7 +89,10 @@ export default function Dashoard() {
   return (
     <main className="max-w-screen-2xl m-auto">
       <div className="flex justify-between h-screen relative">
-        <div className="bg-[#202020] text-white w-[380px]" id="bg-img">
+        <div
+          className="bg-[#202020] text-white w-[300px] min-w-[300px]"
+          id="bg-img"
+        >
           <div className="flex items-center gap-3 p-4">
             <div className="w-12 h-12 rounded-full bg-slate-100 overflow-hidden">
               {user.user_metadata.avatar_url && (

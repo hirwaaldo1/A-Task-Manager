@@ -2,14 +2,16 @@ import { useOutletContext } from "@remix-run/react";
 import { FiCircle, FiSend, FiLoader } from "react-icons/fi";
 import Empty from "~/components/error/Empty";
 import TaskCard from "~/components/ui/TaskCard";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { IoInfiniteSharp } from "react-icons/io5";
+import DraggableList from "react-draggable-list";
 
 export default function Homes() {
   const { allTask, supabase, userID, setAllTask }: any = useOutletContext();
   const [task, setTask] = useState("");
   const [error, setError] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
+  const containerRef = useRef(null);
   async function submitTask() {
     if (loading) return;
     if (task === "" || task.trim() === "") {
@@ -38,6 +40,24 @@ export default function Homes() {
       clearTimeout(timeoutId);
     };
   }, [error]);
+
+  const Items = ({ item, itemSelected, dragHandleProps }: any) => {
+    const { onMouseDown, onTouchStart } = dragHandleProps;
+    return (
+      <div key={item.id} className="disable-select dragHandle">
+        <div className="relative z-50 dragHandle">
+          <TaskCard
+            task={item}
+            onMouseDown={onMouseDown}
+            onTouchStart={onTouchStart}
+          />
+        </div>
+      </div>
+    );
+  };
+  const _onListChange = (newList: any) => {
+    setAllTask(newList);
+  };
   return (
     <div className="bg-[#1c1c1c] text-white w-[80%] py-10 px-12 relative">
       <div className="flex items-center gap-2 mb-5">
@@ -47,15 +67,20 @@ export default function Homes() {
       {allTask.length === 0 ? (
         <Empty />
       ) : (
-        <div className="overflow-auto">
-          <div className="flex flex-col gap-1 w-full">
-            {allTask.map((task: any) => {
-              return <TaskCard key={task.id} task={task} />;
-            })}
-          </div>
+        <div
+          className="overflow-auto"
+          style={{ touchAction: "pan-y" }}
+          ref={containerRef}
+        >
+          <DraggableList
+            itemKey="id"
+            template={Items}
+            list={allTask}
+            onMoveEnd={(newList) => _onListChange(newList)}
+            container={() => containerRef.current}
+          />
         </div>
       )}
-
       <div className="absolute bottom-0 w-full left-0">
         <div className="my-10 mx-12 bg-[#2d2d2d] px-2 rounded flex gap-2 items-center text-[#e2e2e2] py-4 relative">
           {error && (

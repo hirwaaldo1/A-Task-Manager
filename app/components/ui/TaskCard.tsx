@@ -4,13 +4,14 @@ import {
   FiStar,
   FiTrash,
   FiLoader,
+  FiMenu,
 } from "react-icons/fi";
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Mousewheel, Virtual } from "swiper";
 import { useOutletContext } from "@remix-run/react";
 
-export default function TaskCard({ task }: { task: any }) {
+export default function TaskCard({ task, onTouchStart, onMouseDown }: any) {
   SwiperCore.use([Mousewheel, Virtual]);
   const { supabase, setAllTask, setNavBarTask, soundPlay }: any =
     useOutletContext();
@@ -68,70 +69,100 @@ export default function TaskCard({ task }: { task: any }) {
   }
 
   return (
-    <Swiper
-      className="w-full"
-      direction={"horizontal"}
-      mousewheel={{
-        forceToAxis: true,
-        sensitivity: -10,
-        thresholdDelta: 14,
-      }}
-      onSlideChange={(sliler) => {
-        if (sliler.isEnd) handleDeleteTask(task.id);
-      }}
-    >
-      <SwiperSlide>
-        <div
-          className="flex justify-between bg-[#2d2d2d] p-2 rounded hover:bg-[#353535] cursor-pointer transition-all delay-[30ms] active:bg-[#353535]"
-          onClick={() => setNavBarTask(task)}
-        >
-          <div className="flex gap-2 text-[#e2e2e2]">
-            {isLoadingComplete ? (
-              <div className="mt-1">
-                <FiLoader className="animate-spin" size={20} />
+    <div className="relative overflow-hidden ">
+      <span
+        className="w-10 h-full  rounded absolute -left-4 z-50 flex items-center justify-end"
+        onTouchStart={(e: any) => {
+          console.log("touchStart");
+          e.preventDefault();
+          e.target.style.backgroundColor = "blue";
+          document.body.style.overflow = "hidden";
+          onTouchStart(e);
+        }}
+        onMouseDown={(e: any) => {
+          console.log("mouseDown");
+          document.body.style.overflow = "hidden";
+          onMouseDown(e);
+        }}
+        onTouchEnd={(e: any) => {
+          console.log("end");
+          e.target.style.backgroundColor = "black";
+          document.body.style.overflow = "visible";
+        }}
+        onMouseUp={() => {
+          console.log("up");
+          document.body.style.overflow = "visible";
+        }}
+      >
+        <FiMenu className="text-[#6d6d6d]" size={20} />
+      </span>
+      <Swiper
+        className="w-full"
+        direction={"horizontal"}
+        mousewheel={{
+          forceToAxis: true,
+          sensitivity: -10,
+          thresholdDelta: 14,
+        }}
+        onSlideChange={(sliler) => {
+          if (sliler.isEnd) handleDeleteTask(task.id);
+        }}
+      >
+        <SwiperSlide>
+          <div
+            className="flex justify-between bg-[#2d2d2d] p-2 rounded hover:bg-[#353535] cursor-pointer transition-all delay-[30ms] active:bg-[#353535]"
+            onClick={() => setNavBarTask(task)}
+          >
+            <div className="flex gap-2 text-[#e2e2e2] pl-6">
+              {isLoadingComplete ? (
+                <div className="mt-1">
+                  <FiLoader className="animate-spin" size={20} />
+                </div>
+              ) : (
+                <div
+                  className="mt-1"
+                  onClick={(e) => handleIsCompleted(task.id, e)}
+                >
+                  {!task.inProgress ? (
+                    <FiCheckCircle size={20} />
+                  ) : (
+                    <FiCircle size={20} />
+                  )}
+                </div>
+              )}
+              <div className="flex flex-col text-sm">
+                <span
+                  className={task.inProgress === false ? "line-through" : ""}
+                >
+                  {task.task_name}
+                </span>
+                <span className="text-xs">No steps</span>
               </div>
-            ) : (
-              <div
-                className="mt-1"
-                onClick={(e) => handleIsCompleted(task.id, e)}
-              >
-                {!task.inProgress ? (
-                  <FiCheckCircle size={20} />
-                ) : (
-                  <FiCircle size={20} />
-                )}
-              </div>
-            )}
-            <div className="flex flex-col text-sm">
-              <span className={task.inProgress === false ? "line-through" : ""}>
-                {task.task_name}
-              </span>
-              <span className="text-xs">No steps</span>
+            </div>
+            <div className="mt-1">
+              {isLoading ? (
+                <FiLoader className="animate-spin" size={18} />
+              ) : (
+                <FiStar
+                  className={`${
+                    task.isImportance && "fill-[#7589d9] text-[#7589d9]"
+                  }`}
+                  size={18}
+                  onClick={(e) => handleIsImportant(task.id, e)}
+                />
+              )}
             </div>
           </div>
-          <div className="mt-1">
-            {isLoading ? (
-              <FiLoader className="animate-spin" size={18} />
-            ) : (
-              <FiStar
-                className={`${
-                  task.isImportance && "fill-[#7589d9] text-[#7589d9]"
-                }`}
-                size={18}
-                onClick={(e) => handleIsImportant(task.id, e)}
-              />
-            )}
+        </SwiperSlide>
+        <SwiperSlide>
+          <div className="flex justify-between items-center w-full rounded-sm bg-[#ff5252] relative">
+            <div className="text-center flex items-center gap-3 p-[14px]">
+              <FiTrash />
+              <span className="font-medium">Delete</span>
+            </div>
           </div>
-        </div>
-      </SwiperSlide>
-      <SwiperSlide>
-        <div className="flex justify-between items-center w-full rounded-sm bg-[#ff5252] relative">
-          <div className="text-center flex items-center gap-3 p-[14px]">
-            <FiTrash />
-            <span className="font-medium">Delete</span>
-          </div>
-        </div>
-      </SwiperSlide>
-    </Swiper>
+        </SwiperSlide>
+      </Swiper>
+    </div>
   );
 }
