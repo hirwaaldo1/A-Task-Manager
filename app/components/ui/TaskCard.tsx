@@ -136,7 +136,7 @@ export default function TaskCard({ task, onTouchStart, onMouseDown }: any) {
                 >
                   {task.task_name}
                 </span>
-                {task.steps ? (
+                {task.steps.length !== 0 ? (
                   <span className="text-xs">
                     Task {task.steps.filter((v: any) => !v.isProgress).length}{" "}
                     of {task.steps.length}
