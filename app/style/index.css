@@ -10,6 +10,7 @@ body {
 
 body {
   overflow: hidden !important;
+  background-image: url("/assets/bg-left.PNG");
 }
 
 .disable-select {
