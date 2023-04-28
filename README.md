@@ -19,7 +19,7 @@ In this A-Task Project project we have the following pages done:
 ## Technologies Used
 
 This project is mainly based on [Remix](https://remix.run/) plus others few libraries listed below:
-
+- [Remix](https://remix.run/)
 - [Supabase](https://supabase.com)
 - [react-icons](https://www.npmjs.com/package/react-icons)
 - [Tailwind CSS](https://tailwindcss.com/)
