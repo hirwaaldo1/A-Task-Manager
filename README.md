@@ -12,7 +12,7 @@ In this A-Task Project project we have the following pages done:
 
 - [x] Login
 - [x] Sign Up
-- [x] Dashboard - All Tasks
+- [x] Dashboard - All Tasks 
 - [x] Dashboard - All completed tasks
 - [x] Dashboard - All Important tasks
 
